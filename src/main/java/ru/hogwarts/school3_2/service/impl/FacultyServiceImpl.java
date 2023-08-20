@@ -18,56 +18,57 @@ import static java.time.chrono.JapaneseEra.values;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
-    private final Map <Long , Faculty> storageFac;
-    private Long size=0L;
+    private final Map<Long, Faculty> storageFac;
+    private Long size = 0L;
 
-public FacultyServiceImpl(){
-    this.storageFac=new HashMap<>();
-}
-    @Override
-    public Faculty createFaculty(Long id,String name,String color) {
-        if(StringUtils.isAlpha(name)||StringUtils.isAlpha(color)||id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        if(storageFac.containsKey(id)){throw new RuntimeException("Сотрудник уже добавлен");}
-        Faculty faculty=new Faculty(id, name, color);
-        Long idAdd= faculty.getId();
-        storageFac.put(idAdd,faculty);
-        size++;
-    return faculty;
+    public FacultyServiceImpl() {
+        this.storageFac = new HashMap<>();
     }
 
     @Override
-    public Faculty updateFaculty(Long id,String name,String color) {
-        if(StringUtils.isAlpha(name)||StringUtils.isAlpha(color)||id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        if(!storageFac.containsKey(id)){throw new RuntimeException("Сотрудник не найден");}
+    public Faculty createFaculty(Faculty faculty) {
+        faculty.setId(size++);
+        storageFac.put(faculty.getId(), faculty);
+        return faculty;
+    }
 
-        storageFac.remove(id);
-        Faculty faculty=new Faculty(id, name, color);
-        Long idAdd= faculty.getId();
-        storageFac.put(idAdd,faculty);
-    return faculty;
+    @Override
+    public Faculty updateFaculty(Long id, Faculty faculty) {
+        if (!storageFac.containsKey(id)) {
+            return null;
+        }
+        storageFac.put(id, faculty);
+        return faculty;
     }
 
     @Override
     public Faculty getFaculty(Long id) {
-        if(!storageFac.containsKey(id)){throw new RuntimeException("Сотрудник не найден");}
-        if(id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        storageFac.get(id);
-        Faculty faculty=storageFac.get(id);
-    return faculty;
+        if (!storageFac.containsKey(id)) {
+            return null;
+        }
+        if (id == null || id == 0) {
+            return null;
+        }
+        return storageFac.get(id);
     }
 
     @Override
     public Faculty deleteFaculty(Long id) {
-        if(id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        if(!storageFac.containsKey(id)){throw new RuntimeException("Сотрудник не найден");}
+        if (id == null || id == 0) {
+            throw new RuntimeException("введен пустой запрос");
+        }
+        if (!storageFac.containsKey(id)) {
+            throw new RuntimeException("Сотрудник не найден");
+        }
         storageFac.get(id);
-        Faculty faculty=storageFac.get(id);
+        Faculty faculty = storageFac.get(id);
         storageFac.remove(id);
-    size--;
+        size--;
         return faculty;
     }
+
     @Override
-    public  Collection<Faculty> facFilter(String color){
+    public Collection<Faculty> facFilter(String color) {
         return storageFac.values().stream()
                 .findAny().filter(e -> e.getColor().equals(color))
                 .stream().collect(Collectors.toList());

@@ -8,8 +8,8 @@ import java.util.Collection;
 
 public interface FacultyService {
 
-    Faculty createFaculty(Long id,String name,String color);
-    Faculty updateFaculty(Long id,String name,String color);
+    Faculty createFaculty(Faculty faculty);
+    Faculty updateFaculty(Long id, Faculty faculty);
     Faculty getFaculty(Long id);
     Faculty deleteFaculty(Long id);
 

@@ -10,59 +10,59 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 @Service
 public class StudentServiceImpl implements StudentService {
-    private final Map<Long , Student> storageStud;
-    private Long size=0L;
+    private final Map<Long, Student> storageStud;
+    private Long size = 0L;
 
-    public StudentServiceImpl(){
-        this.storageStud=new HashMap<>();
+    public StudentServiceImpl() {
+        this.storageStud = new HashMap<>();
     }
 
     @Override
-    public Student createStudent(Long id,String name,int age) {
-        if(StringUtils.isAlpha(name)||age==0||id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        if(storageStud.containsKey(id)){throw new RuntimeException("Сотрудник уже добавлен");}
-        Student student=new Student(id, name, age);
-        Long idAdd= student.getId();
-        storageStud.put(idAdd,student);
-        size++;
+    public Student createStudent(Student student) {
+        student.setId(size++);
+        storageStud.put(student.getId(), student);
         return student;
     }
 
     @Override
-    public Student updateStudent(Long id,String name,int age) {
-        if(StringUtils.isAlpha(name)||age==0||id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        if(!storageStud.containsKey(id)){throw new RuntimeException("Сотрудник уже добавлен");}
-        Student student=new Student(id, name, age);
-        Long idAdd= student.getId();
-        storageStud.remove(idAdd);
-        storageStud.put(idAdd,student);
+    public Student updateStudent(Long id, Student student) {
+        if(!storageStud.containsKey(id)){return null;}
+        storageStud.put(id, student);
         return student;
     }
 
     @Override
     public Student getStudent(Long id) {
-        if(!storageStud.containsKey(id)){throw new RuntimeException("Сотрудник уже добавлен");}
-        if(id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        storageStud.get(id);
-        Student student=storageStud.get(id);
-        return student;
+        if (!storageStud.containsKey(id)) {
+            throw new RuntimeException("Сотрудник уже добавлен");
+        }
+        if (id == null || id == 0) {
+            throw new RuntimeException("введен пустой запрос");
+        }
+        return  storageStud.get(id);
     }
 
     @Override
     public Student deleteStudent(Long id) {
-        if(!storageStud.containsKey(id)){throw new RuntimeException("Сотрудник уже добавлен");}
-        if(id==null||id==0){throw new RuntimeException("введен пустой запрос");}
-        Student student=storageStud.get(id);
+        if (!storageStud.containsKey(id)) {
+            throw new RuntimeException("Сотрудник уже добавлен");
+        }
+        if (id == null || id == 0) {
+            throw new RuntimeException("введен пустой запрос");
+        }
+        Student student = storageStud.get(id);
         storageStud.remove(id);
         size--;
         return student;
     }
+
     @Override
-    public Collection<Student> studFilter(int age){
+    public Collection<Student> studFilter(int age) {
         return storageStud.values().stream()
-                .findAny().filter(e -> e.getAge()==age)
+                .findAny().filter(e -> e.getAge() == age)
                 .stream().collect(Collectors.toList());
     }
 }

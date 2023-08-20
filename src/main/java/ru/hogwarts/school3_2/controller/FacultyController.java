@@ -1,6 +1,8 @@
 package ru.hogwarts.school3_2.controller;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school3_2.model.Faculty;
 import ru.hogwarts.school3_2.model.Student;
@@ -17,23 +19,29 @@ public class FacultyController {
 
 
     @PostMapping
-    public Faculty createStudent(@RequestBody Long id, @RequestBody String name, @RequestBody String color){
-        return facultyService.createFaculty(id,name,color);
+    public Faculty createStudent(@RequestBody Faculty faculty){
+        return facultyService.createFaculty(faculty);
     }
     @PutMapping()
-    public Faculty updateStudent(@RequestBody Long id,@RequestBody String name,@RequestBody String color){
-        return facultyService.updateFaculty(id, name, color);
+    public ResponseEntity<Faculty> updateStudent(@RequestBody Long id, @RequestBody Faculty faculty){
+        Faculty upFaculty=facultyService.updateFaculty(id, faculty);
+        if (faculty==null){return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty);
     }
     @GetMapping("{id}")
-    public Faculty getStudent(@PathVariable Long id){
-        return facultyService.getFaculty(id);
+    public ResponseEntity<Faculty> getStudent(@PathVariable Long id){
+        Faculty faculty=facultyService.getFaculty(id);
+        if (faculty==null){return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(faculty);
     }
     @DeleteMapping("{id}")
     public Faculty deleteStudent(@PathVariable Long id){
         return facultyService.deleteFaculty(id);
     }
     @GetMapping("{color}")
-    public Collection<Faculty> studFilter(@PathVariable String color){
-        return facultyService.facFilter(color);
+    public ResponseEntity<Collection<Faculty>> studFilter(@PathVariable String color){
+        return ResponseEntity.ok(facultyService.facFilter(color));
     }
 }
